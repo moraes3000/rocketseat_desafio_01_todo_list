@@ -1,3 +1,5 @@
+import { Header } from "./components/Header"
+import { Home } from "./components/Home"
 
 
 function App() {
@@ -5,7 +7,8 @@ function App() {
 
   return (
     <>
-      <h1>Hello World</h1>
+      <Header />
+      <Home />
     </>
   )
 }

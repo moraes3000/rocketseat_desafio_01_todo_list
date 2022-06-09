@@ -1,5 +1,5 @@
 import { PlusCircle, Trash } from "phosphor-react";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 import styles from './Home.module.css'
 interface Task {
@@ -8,9 +8,17 @@ interface Task {
   isComplete: boolean;
 }
 export function Home() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([
+    { 'id': 1, 'title': 'Fazer Layout da aplicação Todo', isComplete: true },
+    { 'id': 2, 'title': 'Compartilhar no LinkedIn', isComplete: false },
+    { 'id': 3, 'title': 'Upa na Vercel', isComplete: false },
+
+  ]);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [isComplete, setIsComplete] = useState(false);
+  const [taskActive, setTaskActive] = useState(0)
+  const numberTask = tasks.length
+
 
   function handleCreateNewTask(event: FormEvent) {
     event.preventDefault();
@@ -31,23 +39,26 @@ export function Home() {
   }
 
   function handleToggleTaskCompletion(id: number) {
-
     const endTasks = tasks.map(task => task.id === id ? {
       ...task,
       isComplete: !task.isComplete
     } : task);
-    console.log(endTasks);
+
     setTasks(endTasks)
 
   }
 
+
+
   function handleRemoveTask(id: number) {
-    // Remova uma task da listagem pelo ID   
     const filterTask = tasks.filter(task => task.id != id)
-
     setTasks(filterTask)
-
   }
+
+  useEffect(() => {
+    var quantidadeElementos = tasks.filter(task => task.isComplete == true).length;
+    setTaskActive(quantidadeElementos)
+  }, [handleToggleTaskCompletion])
 
   return (
     <>
@@ -67,47 +78,39 @@ export function Home() {
           <div className={styles.listTask}>
             <header>
               <div className={styles.taskCreate}>
-                <strong>Tarefas criadas</strong> <span className={styles.badge}>5</span>
+                <strong>Tarefas criadas</strong> <span className={styles.badge}>{numberTask}</span>
               </div>
               <div className={styles.taskComplete}>
-                <strong>Concluídas</strong> <span className={styles.badge}>2 de 5</span>
+                <strong>Concluídas</strong> <span className={styles.badge}>{taskActive} de {numberTask}</span>
               </div>
             </header>
 
             <ul>
               {tasks.map(task => (
-                <li className={styles.taskItem} key={task.id}
-
-                >
-
+                <li className={styles.taskItem} key={task.id}>
                   <p
                     className={task.isComplete ? styles.isActive : styles.taskCheckbox}
                     onClick={() => handleToggleTaskCompletion(task.id)}
                   >
                     <input
                       type="checkbox"
-
                       readOnly
+                      required
                       checked={task.isComplete}
-
                     />
-
                     {task.title}
-
                   </p>
+
                   <button title='Remover task' className={styles.taskRemove} onClick={() => handleRemoveTask(task.id)}>
                     <Trash size={16} />
                   </button>
                 </li>
               ))}
-
             </ul>
+
           </div>
 
-
         </div>
-
-
       </div>
     </>
   )
